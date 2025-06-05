@@ -45,39 +45,9 @@ spec:
       cpu: 10m
       memory: 256Mi
   env:
-    - name: DIGDIR_KRR_PROXY_CONSUMER_CLIENT_ID
-      value: dev-gcp:team-rocket:digdir-krr-proxy
-    - name: DIGDIR_KRR_PROXY_URL
-      value: http://digdir-krr-proxy.team-rocket
-    - name: INST2_API_URL
-      value: https://inst2-q2.dev-fss-pub.nais.io
-    - name: INST2_CLIENT_ID
-      value: dev-fss:team-rocket:inst2-q2
-    - name: KODEVERK_REST_API_URL
-      value: http://kodeverk-api.team-rocket
-    - name: KODEVERK_CLIENT_ID
-      value: dev-gcp.team-rocket.kodeverk-api
-    - name: KONTOREGISTER_CLIENT_ID
-      value: dev-gcp:okonomi:sokos-kontoregister-person
-    - name: KONTOREGISTER_URL
-      value: http://sokos-kontoregister-person.okonomi
-    - name: MEDL_CLIENT_ID
-      value: dev-fss:team-rocket:medlemskap-medl-api
-    - name: MEDLEMSKAP_MEDL_API_URL
-      value: https://medlemskap-medl-api.dev-fss-pub.nais.io
-    - name: NORG2_API_URL
-      value: http://norg2.org
-    - name: PDL_API_URL
-      value: https://pdl-api.dev-fss-pub.nais.io
-    - name: PDL_CONSUMER_CLIENT_ID
-      value: dev-fss:pdl:pdl-api
-    - name: PDL_MOTTAK_API_URL
-      value: https://pdl-mottak.dev-fss-pub.nais.io
-    - name: PDL_MOTTAK_CLIENT_ID
-      value: dev-fss:pdl:pdl-mottak
     - name: EREG_SERVICES_URL
-      value: https://ereg-services-q0.dev-fss-pub.nais.io
-    - name: SPORINGSLOGG_URL
-      value: https://sporingslogg-q2.dev-fss-pub.nais.io
-    - name: SPORINGSLOGG_CLIENT_ID
-      value: dev-fss:pensjonsamhandling:sporingslogg-q2
+      value: https://ereg-services.dev-fss-pub.nais.io
+    - name: AAREG_SERVICES_URL
+      value: https://aareg-services-q1.dev-fss-pub.nais.io
+    - name: AAREG_SERVICES_CLIENT_ID
+      value: dev-fss:arbeidsforhold:aareg-services-nais-q1
