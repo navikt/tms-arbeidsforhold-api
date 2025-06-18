@@ -2,7 +2,9 @@ package no.nav.tms.arbeidsforhold.api.arbeidsforhold
 
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.response.*
@@ -12,6 +14,7 @@ import io.mockk.mockk
 import no.nav.tms.arbeidsforhold.api.InternalRouteConfig
 import no.nav.tms.arbeidsforhold.api.RouteTest
 import no.nav.tms.arbeidsforhold.api.routeConfig
+import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper
 import no.nav.tms.arbeidsforhold.api.setup.TokenExchanger
 import org.junit.jupiter.api.Test
 
@@ -101,6 +104,122 @@ class HentAlleArbeidsforholdForenkletRouteTest : RouteTest() {
                 permittering["periode"]["periodeTil"].asTextOrNull() shouldBe null
                 permittering["prosent"].asText() shouldBe "40 %"
             }
+        }
+    }
+
+    @Test
+    fun `bruker riktige headers mot aareg-services`() = apiTest(internalRouteConfig) {
+        var aaregHeaders: Headers? = null
+
+        externalService(aaregServicesUrl) {
+            get("/api/v2/arbeidstaker/arbeidsforhold") {
+                aaregHeaders = call.request.headers
+                call.respondJson(TestData.alleArbeidsforhold)
+            }
+        }
+
+        externalService(eregServicesUrl) {
+            get("/v2/organisasjon/{orgnr}/noekkelinfo") {
+                when (call.pathParameters["orgnr"]) {
+                    TestData.arbeidsgiverOrgnr -> call.respondJson(TestData.underenhet)
+                    TestData.opplysningspliktigOrgnr -> call.respondJson(TestData.hovedenhet)
+                    else -> call.respond(HttpStatusCode.NotFound)
+                }
+            }
+        }
+
+        client.get(hentAlleForholdPath)
+
+        aaregHeaders.shouldNotBeNull().let {
+            it[HeaderHelper.CALL_ID_HEADER].shouldNotBeNull()
+            it[HeaderHelper.NAV_CONSUMER_ID_HEADER] shouldBe HeaderHelper.NAV_CONSUMER_ID
+            it[HeaderHelper.NAV_PERSONIDENT_HEADER] shouldBe testIdent
+        }
+    }
+
+    @Test
+    fun `bruker riktige headers mot ereg-services`() = apiTest(internalRouteConfig) {
+        externalService(aaregServicesUrl) {
+            get("/api/v2/arbeidstaker/arbeidsforhold") {
+                call.respondJson(TestData.alleArbeidsforhold)
+            }
+        }
+
+        var eregHeaders: Headers? = null
+
+        externalService(eregServicesUrl) {
+            get("/v2/organisasjon/{orgnr}/noekkelinfo") {
+                eregHeaders = call.request.headers
+                when (call.pathParameters["orgnr"]) {
+                    TestData.arbeidsgiverOrgnr -> call.respondJson(TestData.underenhet)
+                    TestData.opplysningspliktigOrgnr -> call.respondJson(TestData.hovedenhet)
+                    else -> call.respond(HttpStatusCode.NotFound)
+                }
+            }
+        }
+
+        client.get(hentAlleForholdPath)
+
+        eregHeaders.shouldNotBeNull().let {
+            it[HeaderHelper.CALL_ID_HEADER].shouldNotBeNull()
+            it[HeaderHelper.NAV_CONSUMER_ID_HEADER] shouldBe HeaderHelper.NAV_CONSUMER_ID
+        }
+    }
+
+    @Test
+    fun `svarer med InternalServiceError dersom aareg-services er nede`() = apiTest(internalRouteConfig) {
+        externalService(aaregServicesUrl) {
+            get("/api/v2/arbeidstaker/arbeidsforhold") {
+                call.respond(HttpStatusCode.ServiceUnavailable)
+            }
+        }
+
+        externalService(eregServicesUrl) {
+            get("/v2/organisasjon/{orgnr}/noekkelinfo") {
+                when (call.pathParameters["orgnr"]) {
+                    TestData.arbeidsgiverOrgnr -> call.respondJson(TestData.underenhet)
+                    TestData.opplysningspliktigOrgnr -> call.respondJson(TestData.hovedenhet)
+                    else -> call.respond(HttpStatusCode.NotFound)
+                }
+            }
+        }
+
+        val response = client.get(hentAlleForholdPath)
+
+        response.status shouldBe HttpStatusCode.InternalServerError
+    }
+
+    @Test
+    fun `bruker orgnr som fallback dersom aareg-services er nede`() = apiTest(internalRouteConfig) {
+        externalService(aaregServicesUrl) {
+            get("/api/v2/arbeidstaker/arbeidsforhold") {
+                call.respondJson(TestData.alleArbeidsforhold)
+            }
+        }
+
+        externalService(eregServicesUrl) {
+            get("/v2/organisasjon/{orgnr}/noekkelinfo") {
+                call.respond(HttpStatusCode.ServiceUnavailable)
+            }
+        }
+
+        val response = client.get(hentAlleForholdPath)
+
+        response.status shouldBe HttpStatusCode.OK
+
+        val jsonResponse = response.json()
+            .shouldNotBeEmpty()
+            .first()
+
+        jsonResponse.let {
+
+            it["arbeidsgiver"]["orgnr"].asText() shouldBe TestData.arbeidsgiverOrgnr
+            it["arbeidsgiver"]["orgnavn"].asText() shouldNotBe TestData.arbeidsgiverOrgnavn
+            it["arbeidsgiver"]["orgnavn"].asText() shouldBe TestData.arbeidsgiverOrgnr
+
+            it["opplysningspliktigarbeidsgiver"]["orgnr"].asText() shouldBe TestData.opplysningspliktigOrgnr
+            it["opplysningspliktigarbeidsgiver"]["orgnavn"].asText() shouldNotBe TestData.opplysningspliktigOrgnavn
+            it["opplysningspliktigarbeidsgiver"]["orgnavn"].asText() shouldBe TestData.opplysningspliktigOrgnr
         }
     }
 }
