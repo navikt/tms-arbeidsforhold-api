@@ -24,9 +24,6 @@ spec:
     - "https://www.nav.no/tms-arbeidsforhold-api"
   tokenx:
     enabled: true
-  azure:
-    application:
-      enabled: true
   idporten:
     enabled: true
     sidecar:
@@ -34,21 +31,12 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: pdl-mottak.prod-fss-pub.nais.io
-        - host: pdl-api.prod-fss-pub.nais.io
-        - host: institusjon-opphold-proxy.prod-fss-pub.nais.io
-        - host: medlemskap-medl-api.prod-fss-pub.nais.io
         - host: ereg-services.prod-fss-pub.nais.io
-        - host: sporingslogg.prod-fss-pub.nais.io
+        - host: aareg-services.prod-fss-pub.nais.io
+    inbound:
       rules:
-        - application: "digdir-krr-proxy"
-          namespace: "team-rocket"
-        - application: "kodeverk-api"
-          namespace: "team-rocket"
-        - application: "sokos-kontoregister-person"
-          namespace: "okonomi"
-        - application: "norg2"
-          namespace: "org"
+        - application: aareg-innsyn-arbeidsgiver
+          namespace: arbeidsforhold
   secureLogs:
     enabled: true
   resources:
@@ -62,5 +50,5 @@ spec:
       value: https://ereg-services.prod-fss-pub.nais.io
     - name: AAREG_SERVICES_URL
       value: https://aareg-services.prod-fss-pub.nais.io
-    - name: AAREG_CLIENT_ID
+    - name: AAREG_SERVICES_CLIENT_ID
       value: prod-fss:arbeidsforhold:aareg-services-nais

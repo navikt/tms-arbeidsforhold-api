@@ -32,6 +32,7 @@ spec:
     outbound:
       external:
         - host: ereg-services-q0.dev-fss-pub.nais.io
+        - host: aareg-services-q1.dev-fss-pub.nais.io
     inbound:
       rules:
         - application: aareg-innsyn-arbeidsgiver
