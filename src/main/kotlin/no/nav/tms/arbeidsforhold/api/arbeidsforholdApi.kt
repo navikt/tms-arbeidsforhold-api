@@ -12,9 +12,9 @@ import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import no.nav.tms.common.metrics.installTmsMicrometerMetrics
@@ -30,6 +30,7 @@ import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
 fun Application.mainModule(
     userRoutes: Route.() -> Unit,
     httpClient: HttpClient,
+    corsInstaller: Application.() -> Unit,
     authInstaller: Application.() -> Unit = {
         authentication {
             idPorten {
@@ -47,6 +48,7 @@ fun Application.mainModule(
 
     install(DefaultHeaders)
 
+    corsInstaller()
     authInstaller()
 
     install(StatusPages) {

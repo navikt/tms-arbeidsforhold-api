@@ -1,8 +1,11 @@
 package no.nav.tms.arbeidsforhold.api
 
+import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.routing.*
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregServicesConsumer
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.ArbeidsforholdService
@@ -30,6 +33,14 @@ fun main() {
         )
     }
 
+    val corsInstaller: Application.() -> Unit = {
+        install(CORS) {
+            allowHost(host = environment.corsAllowedOrigins, schemes = listOf(environment.corsAllowedSchemes))
+            allowCredentials = true
+            allowHeader(HttpHeaders.ContentType)
+        }
+    }
+
     embeddedServer(
         factory = Netty,
         configure = {
@@ -39,7 +50,11 @@ fun main() {
         },
         module = {
             rootPath = "tms-arbeidsforhold-api"
-            mainModule(userRoutes, httpClient)
+            mainModule(
+                userRoutes = userRoutes,
+                httpClient = httpClient,
+                corsInstaller = corsInstaller
+            )
         }
     ).start(wait = true)
 }

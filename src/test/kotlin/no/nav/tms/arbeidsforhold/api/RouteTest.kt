@@ -36,6 +36,7 @@ abstract class RouteTest {
         internalRouteConfig: (HttpClient) -> (Route.() -> Unit),
         userIdent: String = testIdent,
         userLoa: UserLoa = UserLoa.High,
+        corsInstaller: Application.() -> Unit = { },
         block: suspend ApplicationTestBuilder.(HttpClient) -> Unit
     ) = testApplication {
 
@@ -68,7 +69,8 @@ abstract class RouteTest {
                             staticLevelOfAssurance = userLoa.toTokenXLoa()
                         }
                     }
-                }
+                },
+                corsInstaller = corsInstaller
             )
         }
 
