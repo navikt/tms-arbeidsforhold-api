@@ -57,7 +57,8 @@ fun Application.mainModule(
                     secureLog.error { "Kall mot krr-proxy [${cause.endpoint}] feiler med kode [${cause.status}] og melding: ${cause.responseContent}" }
                 }
                 else -> {
-                    secureLog.warn(cause) { "Kall til ${call.request.uri} feilet: ${cause.message}" }
+                    log.error { "Uventet feil ved henting av arbeidsforhold" }
+                    secureLog.error(cause) { "Uventet feil ved henting av arbeidsforhold" }
                 }
             }
             call.respond(HttpStatusCode.InternalServerError)
