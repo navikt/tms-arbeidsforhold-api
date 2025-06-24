@@ -28,7 +28,7 @@ fun main() {
         arbeidsforholdRoutes(
             ArbeidsforholdService(
                 aaregServicesConsumer = AaregServicesConsumer(httpClient, environment.aaregServicesUrl, tokenExchanger),
-                eregServicesConsumer = EregServicesConsumer(httpClient, environment.aaregServicesUrl)
+                eregServicesConsumer = EregServicesConsumer(httpClient, environment.eregServicesUrl)
             )
         )
     }
