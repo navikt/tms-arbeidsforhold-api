@@ -30,7 +30,8 @@ import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
 fun Application.mainModule(
     userRoutes: Route.() -> Unit,
     httpClient: HttpClient,
-    corsInstaller: Application.() -> Unit,
+    corsAllowedOrigins: String,
+    corsAllowedSchemes: String,
     authInstaller: Application.() -> Unit = {
         authentication {
             idPorten {
@@ -46,10 +47,15 @@ fun Application.mainModule(
     val log = KotlinLogging.logger {}
     val secureLog = KotlinLogging.logger("secureLog")
 
-    install(DefaultHeaders)
-
-    corsInstaller()
     authInstaller()
+
+    install(CORS) {
+        allowHost(host = corsAllowedOrigins, schemes = listOf(corsAllowedSchemes))
+        allowCredentials = true
+        allowHeader(HttpHeaders.ContentType)
+    }
+
+    install(DefaultHeaders)
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->

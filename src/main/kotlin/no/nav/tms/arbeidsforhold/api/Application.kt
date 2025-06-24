@@ -33,14 +33,6 @@ fun main() {
         )
     }
 
-    val corsInstaller: Application.() -> Unit = {
-        install(CORS) {
-            allowHost(host = environment.corsAllowedOrigins, schemes = listOf(environment.corsAllowedSchemes))
-            allowCredentials = true
-            allowHeader(HttpHeaders.ContentType)
-        }
-    }
-
     embeddedServer(
         factory = Netty,
         configure = {
@@ -53,7 +45,8 @@ fun main() {
             mainModule(
                 userRoutes = userRoutes,
                 httpClient = httpClient,
-                corsInstaller = corsInstaller
+                corsAllowedOrigins = environment.corsAllowedOrigins,
+                corsAllowedSchemes = environment.corsAllowedSchemes
             )
         }
     ).start(wait = true)
