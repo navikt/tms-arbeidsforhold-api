@@ -1,0 +1,54 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: tms-arbeidsforhold-api
+  namespace: min-side
+  labels:
+    team: min-side
+spec:
+  image: {{version}}
+  port: 8080
+  liveness:
+    path: /tms-arbeidsforhold-api/internal/isalive
+    initialDelay: 10
+  readiness:
+    path: /tms-arbeidsforhold-api/internal/isready
+    initialDelay: 10
+  prometheus:
+    enabled: true
+    path: /tms-arbeidsforhold-api/metrics
+  replicas:
+    min: 2
+    max: 4
+  ingresses:
+    - "https://www.nav.no/tms-arbeidsforhold-api"
+  tokenx:
+    enabled: true
+  idporten:
+    enabled: true
+    sidecar:
+      enabled: true
+  accessPolicy:
+    outbound:
+      external:
+        - host: ereg-services.prod-fss-pub.nais.io
+        - host: aareg-services.prod-fss-pub.nais.io
+    inbound:
+      rules:
+        - application: aareg-innsyn-arbeidsgiver
+          namespace: arbeidsforhold
+  secureLogs:
+    enabled: true
+  resources:
+    limits:
+      memory: 768Mi
+    requests:
+      cpu: 20m
+      memory: 256Mi
+  env:
+    - name: EREG_SERVICES_URL
+      value: https://ereg-services.prod-fss-pub.nais.io
+    - name: AAREG_SERVICES_URL
+      value: https://aareg-services.prod-fss-pub.nais.io
+    - name: AAREG_SERVICES_CLIENT_ID
+      value: prod-fss:arbeidsforhold:aareg-services-nais
