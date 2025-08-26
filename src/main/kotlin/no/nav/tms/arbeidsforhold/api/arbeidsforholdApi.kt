@@ -23,12 +23,14 @@ import no.nav.tms.token.support.idporten.sidecar.IdPortenTokenPrincipal
 import no.nav.tms.token.support.idporten.sidecar.idPorten
 import no.nav.tms.token.support.idporten.sidecar.user.IdportenUserFactory
 import no.nav.tms.token.support.tokenx.validation.LevelOfAssurance
+import no.nav.tms.token.support.tokenx.validation.TokenXAuthenticator
 import no.nav.tms.token.support.tokenx.validation.TokenXPrincipal
 import no.nav.tms.token.support.tokenx.validation.tokenX
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
 
 fun Application.mainModule(
-    userRoutes: Route.() -> Unit,
+    arbeidsforholdRoutes: Route.() -> Unit,
+    legacyRoutes: Route.() -> Unit,
     httpClient: HttpClient,
     corsAllowedOrigins: String,
     corsAllowedSchemes: String,
@@ -85,7 +87,10 @@ fun Application.mainModule(
     routing {
         metaRoutes()
         authenticate {
-            userRoutes()
+            arbeidsforholdRoutes()
+        }
+        authenticate(TokenXAuthenticator.name) {
+            legacyRoutes()
         }
     }
 

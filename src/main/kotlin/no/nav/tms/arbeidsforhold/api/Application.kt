@@ -1,17 +1,11 @@
 package no.nav.tms.arbeidsforhold.api
 
-import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.routing.*
-import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregServicesConsumer
-import no.nav.tms.arbeidsforhold.api.arbeidsforhold.ArbeidsforholdService
-import no.nav.tms.arbeidsforhold.api.arbeidsforhold.EregServicesConsumer
+import no.nav.tms.arbeidsforhold.api.arbeidsforhold.*
 import no.nav.tms.arbeidsforhold.api.setup.TokenExchanger
-import no.nav.tms.arbeidsforhold.api.arbeidsforhold.arbeidsforholdRoutes
 import no.nav.tms.token.support.tokendings.exchange.TokendingsServiceBuilder
 
 fun main() {
@@ -24,13 +18,17 @@ fun main() {
         aaregServicesClientId = environment.aaregServicesClientId
     )
 
-    val userRoutes: Route.() -> Unit = {
-        arbeidsforholdRoutes(
-            ArbeidsforholdService(
-                aaregServicesConsumer = AaregServicesConsumer(httpClient, environment.aaregServicesUrl, tokenExchanger),
-                eregServicesConsumer = EregServicesConsumer(httpClient, environment.eregServicesUrl)
-            )
-        )
+    val arbeidsforholdService = ArbeidsforholdService(
+        aaregServicesConsumer = AaregServicesConsumer(httpClient, environment.aaregServicesUrl, tokenExchanger),
+        eregServicesConsumer = EregServicesConsumer(httpClient, environment.eregServicesUrl)
+    )
+
+    val arbeidsforholdRoutes: Route.() -> Unit = {
+        arbeidsforholdRoutes(arbeidsforholdService)
+    }
+
+    val legacyRoutes: Route.() -> Unit = {
+        legacyRoutes(arbeidsforholdService)
     }
 
     embeddedServer(
@@ -43,7 +41,8 @@ fun main() {
         module = {
             rootPath = "tms-arbeidsforhold-api"
             mainModule(
-                userRoutes = userRoutes,
+                arbeidsforholdRoutes = arbeidsforholdRoutes,
+                legacyRoutes = legacyRoutes,
                 httpClient = httpClient,
                 corsAllowedOrigins = environment.corsAllowedOrigins,
                 corsAllowedSchemes = environment.corsAllowedSchemes

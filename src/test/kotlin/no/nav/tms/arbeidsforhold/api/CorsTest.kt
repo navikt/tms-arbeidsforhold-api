@@ -14,7 +14,7 @@ class CorsTest : RouteTest() {
     private val allowedSchemes = "http"
     private val allowedOrigins = "*.test.no"
 
-    private val internalRouteConfig: InternalRouteConfig = { client ->
+    private val arbeidsforholdRouteConfig: InternalRouteConfig = {
         routeConfig {
             get(testPath) {
                 call.respond(HttpStatusCode.OK)
@@ -24,7 +24,7 @@ class CorsTest : RouteTest() {
 
     @Test
     fun `slipper gjennom kall fra godkjente kilder`() = apiTest(
-        internalRouteConfig = internalRouteConfig,
+        arbeidsforholdRouteConfig = arbeidsforholdRouteConfig,
         corsAllowedOrigins = allowedOrigins,
         corsAllowedSchemes = allowedSchemes
     ) {client ->
@@ -38,7 +38,7 @@ class CorsTest : RouteTest() {
 
     @Test
     fun `slipper ikke gjennom kall fra ukjente kilder`() = apiTest(
-        internalRouteConfig = internalRouteConfig,
+        arbeidsforholdRouteConfig = arbeidsforholdRouteConfig,
         corsAllowedOrigins = allowedOrigins,
         corsAllowedSchemes = allowedSchemes
     ) {client ->
@@ -51,7 +51,7 @@ class CorsTest : RouteTest() {
 
     @Test
     fun `slipper ikke gjennom kall fra feil protokoll`() = apiTest(
-        internalRouteConfig = internalRouteConfig,
+        arbeidsforholdRouteConfig = arbeidsforholdRouteConfig,
         corsAllowedOrigins = allowedOrigins,
         corsAllowedSchemes = allowedSchemes
     ) {client ->

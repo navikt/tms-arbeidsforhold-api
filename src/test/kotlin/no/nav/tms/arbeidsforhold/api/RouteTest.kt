@@ -11,7 +11,6 @@ import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
@@ -33,7 +32,8 @@ abstract class RouteTest {
 
     @KtorDsl
     fun apiTest(
-        internalRouteConfig: (HttpClient) -> (Route.() -> Unit),
+        arbeidsforholdRouteConfig: (HttpClient) -> (Route.() -> Unit) = { routeConfig {  } },
+        legacyRouteConfig: (HttpClient) -> (Route.() -> Unit) = { routeConfig {  } },
         userIdent: String = testIdent,
         userLoa: UserLoa = UserLoa.High,
         corsAllowedOrigins: String = "*",
@@ -53,7 +53,8 @@ abstract class RouteTest {
 
         application {
             mainModule(
-                internalRouteConfig(serverClient),
+                arbeidsforholdRouteConfig(serverClient),
+                legacyRouteConfig(serverClient),
                 serverClient,
                 corsAllowedOrigins = corsAllowedOrigins,
                 corsAllowedSchemes = corsAllowedSchemes,

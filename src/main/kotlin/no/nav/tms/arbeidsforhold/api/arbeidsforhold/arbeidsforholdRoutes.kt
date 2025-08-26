@@ -17,8 +17,9 @@ fun Route.arbeidsforholdRoutes(arbeidsforholdService: ArbeidsforholdService) {
 
         call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId))
     }
+}
 
-    // legacy
+fun Route.legacyRoutes(arbeidsforholdService: ArbeidsforholdService) {
     get("/arbeidsforhold") {
         call.respond(arbeidsforholdService.hentAlleArbeidsforhold(call.user))
     }
