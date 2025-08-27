@@ -3,7 +3,7 @@ package no.nav.tms.arbeidsforhold.api.arbeidsforhold
 import io.ktor.http.*
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
-import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregServicesConsumer.Brukerrolle
+import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregServicesConsumer.Brukerkontekst
 import no.nav.tms.arbeidsforhold.api.user
 
 fun Route.arbeidsforholdRoutes(arbeidsforholdService: ArbeidsforholdService) {
@@ -15,7 +15,7 @@ fun Route.arbeidsforholdRoutes(arbeidsforholdService: ArbeidsforholdService) {
     get("/arbeidsforhold/{id}") {
         val forholdsId = call.parameters.requireId()
 
-        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId, Brukerrolle.Privat))
+        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId, Brukerkontekst.Privat))
     }
 }
 
@@ -25,7 +25,7 @@ fun Route.arbeidsgiverRoute(arbeidsforholdService: ArbeidsforholdService) {
     get("/arbeidsforholdinnslag/arbeidsgiver/{id}") {
         val forholdsId = call.parameters.requireId()
 
-        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId, Brukerrolle.Arbeidsgiver))
+        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId, Brukerkontekst.Arbeidsgiver))
     }
 }
 

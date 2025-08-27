@@ -10,7 +10,7 @@ object HeaderHelper {
     const val NAV_CONSUMER_ID_HEADER = "Nav-Consumer-Id"
     const val NAV_CONSUMER_ID = "tms-arbeidsforhold-api"
     const val NAV_PERSONIDENT_HEADER = "Nav-Personident"
-    const val BRUKERROLLE = "Brukerrolle"
+    const val BRUKERKONTEKST = "Nav-Aareg-Kontekst"
 
     fun HttpRequestBuilder.addNavHeaders(ident: String? = null) {
         header(CALL_ID_HEADER, UUID.randomUUID().toString())
@@ -21,8 +21,8 @@ object HeaderHelper {
         }
     }
 
-    fun HttpRequestBuilder.addRolleHeader(rolle: AaregServicesConsumer.Brukerrolle) {
-        header(BRUKERROLLE, rolle.name.uppercase())
+    fun HttpRequestBuilder.addKontekstHeader(rolle: AaregServicesConsumer.Brukerkontekst) {
+        header(BRUKERKONTEKST, rolle.name.uppercase())
     }
 
     fun HttpRequestBuilder.authorization(token: String) {

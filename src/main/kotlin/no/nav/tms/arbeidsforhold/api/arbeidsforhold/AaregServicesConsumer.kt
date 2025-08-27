@@ -8,7 +8,7 @@ import no.nav.tms.arbeidsforhold.api.UserPrincipal
 import no.nav.tms.arbeidsforhold.api.setup.ConsumerException
 import no.nav.tms.arbeidsforhold.api.setup.ConsumerMetrics
 import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper.addNavHeaders
-import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper.addRolleHeader
+import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper.addKontekstHeader
 import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper.authorization
 import no.nav.tms.arbeidsforhold.api.setup.TokenExchanger
 
@@ -39,14 +39,14 @@ class AaregServicesConsumer(
         }
     }
 
-    suspend fun hentArbeidsforhold(user: UserPrincipal, arbeidsforholdId: Int, brukerrolle: Brukerrolle): AaregResponse.Arbeidsforhold {
+    suspend fun hentArbeidsforhold(user: UserPrincipal, arbeidsforholdId: Int, brukerkontekst: Brukerkontekst): AaregResponse.Arbeidsforhold {
         val response = metrics.measureRequest("enkelt_forhold") {
             client.get("$aaregServicesUrl/api/v2/arbeidsforhold/$arbeidsforholdId") {
                 parameter("historikk", true)
                 parameter("sporingsinformasjon", false)
                 authorization(tokenExchanger.aaregServicesToken(user.accessToken))
                 addNavHeaders()
-                addRolleHeader(brukerrolle)
+                addKontekstHeader(brukerkontekst)
             }
         }
 
@@ -57,7 +57,7 @@ class AaregServicesConsumer(
         }
     }
 
-    enum class Brukerrolle {
+    enum class Brukerkontekst {
         Privat, Arbeidsgiver
     }
 
