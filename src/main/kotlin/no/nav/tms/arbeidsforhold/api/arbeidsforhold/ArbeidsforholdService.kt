@@ -3,6 +3,7 @@ package no.nav.tms.arbeidsforhold.api.arbeidsforhold
 import no.nav.tms.arbeidsforhold.api.UserPrincipal
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregIdentHelper.erOrganisasjon
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregIdentHelper.firstOfTypeOrganisasjon
+import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregServicesConsumer.Brukerrolle
 
 
 class ArbeidsforholdService(
@@ -19,8 +20,8 @@ class ArbeidsforholdService(
         }
     }
 
-    suspend fun hentDetaljertArbeidsforhold(user: UserPrincipal, forholdsId: Int): Arbeidsforhold {
-        return aaregServicesConsumer.hentArbeidsforhold(user, forholdsId).let { response ->
+    suspend fun hentDetaljertArbeidsforhold(user: UserPrincipal, forholdsId: Int, rolle: Brukerrolle): Arbeidsforhold {
+        return aaregServicesConsumer.hentArbeidsforhold(user, forholdsId, rolle).let { response ->
             Arbeidsforhold.mapDetaljertForhold(
                 response = response,
                 arbeidsgivernavn = orgnavnForPeriode(response.arbeidssted, response.ansettelsesperiode),
