@@ -35,7 +35,7 @@ class AaregServicesConsumer(
         if (response.status.isSuccess()) {
             return response.body()
         } else {
-            throw ConsumerException.fromResponse("ereg-services", response)
+            throw ConsumerException.fromResponse("aareg-services", response)
         }
     }
 
@@ -52,7 +52,7 @@ class AaregServicesConsumer(
         if (response.status.isSuccess()) {
             return response.body()
         } else {
-            throw ConsumerException.fromResponse("ereg-services", response)
+            throw ConsumerException.fromResponse("aareg-services", response)
         }
     }
 

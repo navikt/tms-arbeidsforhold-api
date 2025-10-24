@@ -64,7 +64,7 @@ fun Application.mainModule(
             when(cause) {
                 is ConsumerException -> {
                     log.error { "Kall mot ${cause.externalService} [${cause.endpoint}] feiler med kode [${cause.status}]" }
-                    secureLog.error { "Kall mot krr-proxy [${cause.endpoint}] feiler med kode [${cause.status}] og melding: ${cause.responseContent}" }
+                    secureLog.error { "Kall mot ${cause.externalService} [${cause.endpoint}] feiler med kode [${cause.status}] og melding: ${cause.responseContent}" }
                 }
                 else -> {
                     log.error { "Uventet feil ved henting av arbeidsforhold" }
