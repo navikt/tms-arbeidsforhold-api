@@ -28,7 +28,7 @@ fun main() {
     }
 
     val legacyRoutes: Route.() -> Unit = {
-        legacyRoutes(arbeidsforholdService)
+        arbeidsgiverRoute(arbeidsforholdService)
     }
 
     embeddedServer(

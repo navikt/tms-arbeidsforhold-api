@@ -3,7 +3,7 @@ package no.nav.tms.arbeidsforhold.api.arbeidsforhold
 import io.ktor.http.*
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
-import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper
+import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregServicesConsumer.Brukerkontekst
 import no.nav.tms.arbeidsforhold.api.user
 
 fun Route.arbeidsforholdRoutes(arbeidsforholdService: ArbeidsforholdService) {
@@ -15,25 +15,17 @@ fun Route.arbeidsforholdRoutes(arbeidsforholdService: ArbeidsforholdService) {
     get("/arbeidsforhold/{id}") {
         val forholdsId = call.parameters.requireId()
 
-        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId))
+        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId, Brukerkontekst.Privat))
     }
 }
 
-fun Route.legacyRoutes(arbeidsforholdService: ArbeidsforholdService) {
-    get("/arbeidsforhold") {
-        call.respond(arbeidsforholdService.hentAlleArbeidsforhold(call.user))
-    }
-
-    get("/arbeidsforholdinnslag/arbeidstaker/{id}") {
-        val forholdsId = call.parameters.requireId()
-
-        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId))
-    }
+// Legacy inngang fra aareg-innsyn-arbeidsgiver. Kan fjernes når de har skrevet omm sitt system
+fun Route.arbeidsgiverRoute(arbeidsforholdService: ArbeidsforholdService) {
 
     get("/arbeidsforholdinnslag/arbeidsgiver/{id}") {
         val forholdsId = call.parameters.requireId()
 
-        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId))
+        call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId, Brukerkontekst.Arbeidsgiver))
     }
 }
 
