@@ -34,6 +34,9 @@ spec:
       enabled: true
   accessPolicy:
     outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
       external:
         - host: ereg-services.dev-fss-pub.nais.io
         - host: aareg-services-q1.dev-fss-pub.nais.io
@@ -41,8 +44,6 @@ spec:
       rules:
         - application: aareg-innsyn-arbeidsgiver
           namespace: arbeidsforhold
-  secureLogs:
-    enabled: true
   resources:
     limits:
       memory: 768Mi

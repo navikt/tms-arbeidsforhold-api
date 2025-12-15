@@ -19,6 +19,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import no.nav.tms.common.metrics.installTmsMicrometerMetrics
 import no.nav.tms.arbeidsforhold.api.setup.ConsumerException
+import no.nav.tms.common.logging.TeamLogs
 import no.nav.tms.token.support.idporten.sidecar.IdPortenTokenPrincipal
 import no.nav.tms.token.support.idporten.sidecar.idPorten
 import no.nav.tms.token.support.idporten.sidecar.user.IdportenUserFactory
@@ -47,7 +48,7 @@ fun Application.mainModule(
     }
 ) {
     val log = KotlinLogging.logger {}
-    val secureLog = KotlinLogging.logger("secureLog")
+    val teamLog = TeamLogs.logger { }
 
     authInstaller()
 
@@ -64,11 +65,11 @@ fun Application.mainModule(
             when(cause) {
                 is ConsumerException -> {
                     log.error { "Kall mot ${cause.externalService} [${cause.endpoint}] feiler med kode [${cause.status}]" }
-                    secureLog.error { "Kall mot ${cause.externalService} [${cause.endpoint}] feiler med kode [${cause.status}] og melding: ${cause.responseContent}" }
+                    teamLog.error { "Kall mot ${cause.externalService} [${cause.endpoint}] feiler med kode [${cause.status}] og melding: ${cause.responseContent}" }
                 }
                 else -> {
                     log.error { "Uventet feil ved henting av arbeidsforhold" }
-                    secureLog.error(cause) { "Uventet feil ved henting av arbeidsforhold" }
+                    teamLog.error(cause) { "Uventet feil ved henting av arbeidsforhold" }
                 }
             }
             call.respond(HttpStatusCode.InternalServerError)

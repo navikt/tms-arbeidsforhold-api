@@ -44,10 +44,11 @@ dependencies {
     implementation(TmsKtorTokenSupport.tokenXValidation)
     implementation(TmsKtorTokenSupport.tokendingsExchange)
     implementation(TmsKtorTokenSupport.idportenSidecar)
-    implementation(TmsCommonLib.utils)
     implementation(TmsCommonLib.kubernetes)
-    implementation(TmsCommonLib.observability)
     implementation(TmsCommonLib.metrics)
+    implementation(TmsCommonLib.observability)
+    implementation(TmsCommonLib.teamLogger)
+    implementation(TmsCommonLib.utils)
     implementation(TmsKafkaTools.kafkaApplication)
     implementation(Prometheus.metricsCore)
 

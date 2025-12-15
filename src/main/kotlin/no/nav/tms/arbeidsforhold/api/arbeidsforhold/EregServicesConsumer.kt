@@ -8,13 +8,14 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import no.nav.tms.arbeidsforhold.api.setup.ConsumerMetrics
 import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper.addNavHeaders
+import no.nav.tms.common.logging.TeamLogs
 
 class EregServicesConsumer(
     private val client: HttpClient,
     private val eregServicesUrl: String
 ) {
     private val log = KotlinLogging.logger { }
-    private val secureLog = KotlinLogging.logger("secureLog")
+    private val teamLog = TeamLogs.logger { }
 
     private val metrics = ConsumerMetrics.init { }
 
@@ -36,7 +37,7 @@ class EregServicesConsumer(
                 .sammensattnavn
         } else {
             val feilmelding = eregResponse.bodyAsText()
-            secureLog.warn { "Oppslag mot EREG på organisasjonsnummer [$orgnr] feilet med melding: [$feilmelding]." }
+            teamLog.warn { "Oppslag mot EREG på organisasjonsnummer [$orgnr] feilet med melding: [$feilmelding]." }
             log.warn { "Oppslag mot EREG på organisasjonsnummer [$orgnr] feilet." }
 
             orgnr
