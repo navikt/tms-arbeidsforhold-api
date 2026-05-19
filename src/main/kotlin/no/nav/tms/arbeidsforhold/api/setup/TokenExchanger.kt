@@ -1,12 +1,12 @@
 package no.nav.tms.arbeidsforhold.api.setup;
 
-import no.nav.tms.token.support.tokendings.exchange.TokendingsService
+import no.nav.tms.token.support.user.token.exchange.UserTokenExchanger
 
 class TokenExchanger(
-    private val tokendingsService: TokendingsService,
+    private val tokenExchanger: UserTokenExchanger,
     private val aaregServicesClientId: String,
 ) {
     suspend fun aaregServicesToken(accessToken: String): String {
-        return tokendingsService.exchangeToken(accessToken, aaregServicesClientId)
+        return tokenExchanger.exchangeToken(accessToken, aaregServicesClientId)
     }
 }

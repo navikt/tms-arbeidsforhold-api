@@ -1,10 +1,12 @@
 package no.nav.tms.arbeidsforhold.api.arbeidsforhold
 
 import io.ktor.http.*
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.principal
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregServicesConsumer.Brukerkontekst
-import no.nav.tms.arbeidsforhold.api.user
+import no.nav.tms.token.support.user.token.verification.UserPrincipal
 
 fun Route.arbeidsforholdRoutes(arbeidsforholdService: ArbeidsforholdService) {
 
@@ -28,6 +30,8 @@ fun Route.arbeidsgiverRoute(arbeidsforholdService: ArbeidsforholdService) {
         call.respond(arbeidsforholdService.hentDetaljertArbeidsforhold(call.user, forholdsId, Brukerkontekst.Arbeidsgiver))
     }
 }
+
+private val ApplicationCall.user get() = principal<UserPrincipal>() ?: throw IllegalStateException("Fant ikke UserPrincipal i context")
 
 private fun Parameters.requireId(): Int {
     val idParameter = get("id") ?: throw ArbeidsforholdIdException()

@@ -4,13 +4,13 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.http.isSuccess
-import no.nav.tms.arbeidsforhold.api.UserPrincipal
 import no.nav.tms.arbeidsforhold.api.setup.ConsumerException
 import no.nav.tms.arbeidsforhold.api.setup.ConsumerMetrics
 import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper.addNavHeaders
 import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper.addKontekstHeader
 import no.nav.tms.arbeidsforhold.api.setup.HeaderHelper.authorization
 import no.nav.tms.arbeidsforhold.api.setup.TokenExchanger
+import no.nav.tms.token.support.user.token.verification.UserPrincipal
 
 class AaregServicesConsumer(
     private val client: HttpClient,
