@@ -15,10 +15,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import io.ktor.utils.io.*
-import no.nav.tms.token.support.idporten.sidecar.mock.idPortenMock
-import no.nav.tms.token.support.tokenx.validation.mock.tokenXMock
-import no.nav.tms.token.support.tokenx.validation.mock.LevelOfAssurance as TokenXLoa
-import no.nav.tms.token.support.idporten.sidecar.mock.LevelOfAssurance as IdPortenLoa
+import no.nav.tms.token.support.user.token.verification.Issuer
+import no.nav.tms.token.support.user.token.verification.LevelOfAssurance
+import no.nav.tms.token.support.user.token.verificaton.mock.userTokenMock
 import java.text.DateFormat
 import java.time.LocalDateTime
 
@@ -30,12 +29,11 @@ abstract class RouteTest {
 
     private val objectMapper = jacksonObjectMapper()
 
-    @KtorDsl
     fun apiTest(
         arbeidsforholdRouteConfig: (HttpClient) -> (Route.() -> Unit) = { routeConfig {  } },
         legacyRouteConfig: (HttpClient) -> (Route.() -> Unit) = { routeConfig {  } },
         userIdent: String = testIdent,
-        userLoa: UserLoa = UserLoa.High,
+        userLoa: LevelOfAssurance = LevelOfAssurance.High,
         corsAllowedOrigins: String = "*",
         corsAllowedSchemes: String = "http",
         block: suspend ApplicationTestBuilder.(HttpClient) -> Unit
@@ -60,17 +58,19 @@ abstract class RouteTest {
                 corsAllowedSchemes = corsAllowedSchemes,
                 authInstaller = {
                     authentication {
-                        idPortenMock {
-                            setAsDefault = true
-                            alwaysAuthenticated = true
-                            staticUserPid = userIdent
-                            staticLevelOfAssurance = userLoa.toIdPortenLoa()
+                        userTokenMock {
+                            enableDefaultAuthentication {
+                                tokenIssuer = Issuer.IdPorten
+                                tokenIdent = userIdent
+                                tokenLoa = userLoa
+                            }
                         }
-                        tokenXMock {
-                            setAsDefault = false
-                            alwaysAuthenticated = true
-                            staticUserPid = userIdent
-                            staticLevelOfAssurance = userLoa.toTokenXLoa()
+                        userTokenMock(SYSTEM_FACING_API) {
+                            configureIssuers(Issuer.Tokenx)
+                            enableDefaultAuthentication {
+                                tokenIdent = userIdent
+                                tokenLoa = userLoa
+                            }
                         }
                     }
                 },
@@ -111,17 +111,8 @@ abstract class RouteTest {
 
     fun JsonNode.asTextOrNull() = if(isNull) null else asText()
     fun JsonNode.asLocalDateTime() = LocalDateTime.parse(asText())
-
-    enum class UserLoa {
-        Substantial, High;
-
-        fun toIdPortenLoa() = if (this == High) IdPortenLoa.HIGH else IdPortenLoa.SUBSTANTIAL
-
-        fun toTokenXLoa() = if (this == High) TokenXLoa.HIGH else TokenXLoa.SUBSTANTIAL
-    }
 }
 
 typealias InternalRouteConfig = (HttpClient) -> (Route.() -> Unit)
 
-@KtorDsl
 fun routeConfig(block: Route.() -> Unit) = block

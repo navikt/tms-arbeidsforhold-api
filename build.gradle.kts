@@ -37,13 +37,12 @@ dependencies {
     implementation(Ktor.Server.statusPages)
     implementation(Ktor.Server.auth)
     implementation(Ktor.Client.contentNegotiation)
-    implementation(Ktor.Client.apache)
+    implementation(Ktor.Client.apache5)
     implementation(Ktor.Serialization.jackson)
     implementation(Logstash.logbackEncoder)
     implementation(Postgresql.postgresql)
-    implementation(TmsKtorTokenSupport.tokenXValidation)
-    implementation(TmsKtorTokenSupport.tokendingsExchange)
-    implementation(TmsKtorTokenSupport.idportenSidecar)
+    implementation(TmsKtorTokenSupport.userTokenExchange)
+    implementation(TmsKtorTokenSupport.userTokenVerification)
     implementation(TmsCommonLib.kubernetes)
     implementation(TmsCommonLib.metrics)
     implementation(TmsCommonLib.observability)
@@ -54,14 +53,14 @@ dependencies {
 
     testImplementation(JunitPlatform.launcher)
     testImplementation(JunitJupiter.api)
+    testImplementation(JunitJupiter.engine)
     testImplementation(Mockk.mockk)
     testImplementation(TestContainers.postgresql)
     testImplementation(Kotest.runnerJunit5)
     testImplementation(Kotest.assertionsCore)
     testImplementation(Ktor.Test.serverTestHost)
     testImplementation(Ktor.Test.clientMock)
-    testImplementation(TmsKtorTokenSupport.tokenXValidationMock)
-    testImplementation(TmsKtorTokenSupport.idportenSidecarMock)
+    testImplementation(TmsKtorTokenSupport.userTokenVerificationMock)
 }
 
 application {

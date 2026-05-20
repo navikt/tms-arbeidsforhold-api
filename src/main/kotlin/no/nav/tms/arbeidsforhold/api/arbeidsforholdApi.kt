@@ -20,14 +20,8 @@ import io.ktor.server.routing.*
 import no.nav.tms.common.metrics.installTmsMicrometerMetrics
 import no.nav.tms.arbeidsforhold.api.setup.ConsumerException
 import no.nav.tms.common.logging.TeamLogs
-import no.nav.tms.token.support.idporten.sidecar.IdPortenTokenPrincipal
-import no.nav.tms.token.support.idporten.sidecar.idPorten
-import no.nav.tms.token.support.idporten.sidecar.user.IdportenUserFactory
-import no.nav.tms.token.support.tokenx.validation.LevelOfAssurance
-import no.nav.tms.token.support.tokenx.validation.TokenXAuthenticator
-import no.nav.tms.token.support.tokenx.validation.TokenXPrincipal
-import no.nav.tms.token.support.tokenx.validation.tokenX
-import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
+import no.nav.tms.token.support.user.token.verification.Issuer
+import no.nav.tms.token.support.user.token.verification.userToken
 
 fun Application.mainModule(
     arbeidsforholdRoutes: Route.() -> Unit,
@@ -37,12 +31,11 @@ fun Application.mainModule(
     corsAllowedSchemes: String,
     authInstaller: Application.() -> Unit = {
         authentication {
-            idPorten {
-                setAsDefault = true
+            userToken {
+
             }
-            tokenX {
-                setAsDefault = false
-                levelOfAssurance = LevelOfAssurance.HIGH
+            userToken(SYSTEM_FACING_API) {
+                configureIssuers(Issuer.Tokenx)
             }
         }
     }
@@ -90,13 +83,15 @@ fun Application.mainModule(
         authenticate {
             arbeidsforholdRoutes()
         }
-        authenticate(TokenXAuthenticator.name) {
+        authenticate(SYSTEM_FACING_API) {
             legacyRoutes()
         }
     }
 
     configureShutdownHook(httpClient)
 }
+
+const val SYSTEM_FACING_API = "system_facing"
 
 private fun Route.metaRoutes() {
     get("/internal/isalive") {
@@ -121,23 +116,3 @@ fun ObjectMapper.jsonConfig(): ObjectMapper {
     disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     return this
 }
-
-val ApplicationCall.user: UserPrincipal get() {
-
-    return principal<IdPortenTokenPrincipal>()?.let {
-
-        val idPortenUser = IdportenUserFactory.createIdportenUser(this)
-
-        UserPrincipal(idPortenUser.ident, idPortenUser.tokenString)
-    } ?: principal<TokenXPrincipal>()?.let {
-
-        val tokenXUser = TokenXUserFactory.createTokenXUser(this)
-
-        UserPrincipal(tokenXUser.ident, tokenXUser.tokenString)
-    }?: throw IllegalStateException("Fant ingen principal")
-}
-
-class UserPrincipal(
-    val ident: String,
-    val accessToken: String
-)

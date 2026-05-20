@@ -1,9 +1,9 @@
 package no.nav.tms.arbeidsforhold.api.arbeidsforhold
 
-import no.nav.tms.arbeidsforhold.api.UserPrincipal
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregIdentHelper.erOrganisasjon
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregIdentHelper.firstOfTypeOrganisasjon
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.AaregServicesConsumer.Brukerkontekst
+import no.nav.tms.token.support.user.token.verification.UserPrincipal
 
 
 class ArbeidsforholdService(

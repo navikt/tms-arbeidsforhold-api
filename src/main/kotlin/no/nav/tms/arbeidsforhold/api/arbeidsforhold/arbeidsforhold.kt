@@ -13,7 +13,7 @@ data class Arbeidsforhold(
     val ansettelsesperiode: Ansettelsesperiode?,
     val utenlandsopphold: List<Utenlandsopphold>,
     val permisjonPermittering: List<PermisjonPermittering>,
-    @JsonUnwrapped
+    @param:JsonUnwrapped
     val ansettelsesdetaljer: Ansettelsesdetaljer?
 ) {
     data class Ansettelsesdetaljer(

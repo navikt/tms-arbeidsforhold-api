@@ -6,7 +6,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.routing.*
 import no.nav.tms.arbeidsforhold.api.arbeidsforhold.*
 import no.nav.tms.arbeidsforhold.api.setup.TokenExchanger
-import no.nav.tms.token.support.tokendings.exchange.TokendingsServiceBuilder
+import no.nav.tms.token.support.user.token.exchange.UserTokenExchangerBuilder
 
 fun main() {
     val environment = Environment()
@@ -14,7 +14,7 @@ fun main() {
     val httpClient = HttpClientBuilder.build()
 
     val tokenExchanger = TokenExchanger(
-        tokendingsService = TokendingsServiceBuilder.buildTokendingsService(),
+        tokenExchanger = UserTokenExchangerBuilder.build(),
         aaregServicesClientId = environment.aaregServicesClientId
     )
 
