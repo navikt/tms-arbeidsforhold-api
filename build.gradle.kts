@@ -1,12 +1,8 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    kotlin("jvm").version(Kotlin.version)
-
-    id(TmsJarBundling.plugin)
-
-    // Apply the application plugin to add support for building a CLI application.
+    kotlin("jvm").version(managed.versions.kotlin)
+    alias(managed.plugins.tms.jarBundling)
     application
 }
 
@@ -26,41 +22,32 @@ repositories {
 }
 
 dependencies {
-    implementation(JacksonDatatype.datatypeJsr310)
-    implementation(JacksonDatatype.moduleKotlin)
-    implementation(KotlinLogging.logging)
-    implementation(Ktor.Server.contentNegotiation)
-    implementation(Ktor.Server.core)
-    implementation(Ktor.Server.cors)
-    implementation(Ktor.Server.defaultHeaders)
-    implementation(Ktor.Server.netty)
-    implementation(Ktor.Server.statusPages)
-    implementation(Ktor.Server.auth)
-    implementation(Ktor.Client.contentNegotiation)
-    implementation(Ktor.Client.apache5)
-    implementation(Ktor.Serialization.jackson)
-    implementation(Logstash.logbackEncoder)
-    implementation(Postgresql.postgresql)
-    implementation(TmsKtorTokenSupport.userTokenExchange)
-    implementation(TmsKtorTokenSupport.userTokenVerification)
-    implementation(TmsCommonLib.kubernetes)
-    implementation(TmsCommonLib.metrics)
-    implementation(TmsCommonLib.observability)
-    implementation(TmsCommonLib.teamLogger)
-    implementation(TmsCommonLib.utils)
-    implementation(TmsKafkaTools.kafkaApplication)
-    implementation(Prometheus.metricsCore)
+    implementation(managed.bundles.jackson)
+    implementation(managed.kotlinLogging)
+    implementation(managed.bundles.ktorServer)
+    implementation(managed.ktor.server.cors)
+    implementation(managed.ktor.server.defaultHeaders)
+    implementation(managed.bundles.ktorClient)
+    implementation(managed.ktor.serialization.jackson)
+    implementation(managed.logback.encoder)
+    implementation(managed.tms.ktorTokenSupport.userToken.exchange)
+    implementation(managed.tms.ktorTokenSupport.userToken.verification)
+    implementation(managed.tms.commonLib.kubernetes)
+    implementation(managed.tms.commonLib.metrics)
+    implementation(managed.tms.commonLib.observability)
+    implementation(managed.tms.commonLib.teamLogger)
+    implementation(managed.tms.commonLib.utils)
+    implementation(managed.tms.kafka.application)
+    implementation(managed.prometheus.metric.core)
+    implementation(managed.postgresql)
 
-    testImplementation(JunitPlatform.launcher)
-    testImplementation(JunitJupiter.api)
-    testImplementation(JunitJupiter.engine)
-    testImplementation(Mockk.mockk)
-    testImplementation(TestContainers.postgresql)
-    testImplementation(Kotest.runnerJunit5)
-    testImplementation(Kotest.assertionsCore)
-    testImplementation(Ktor.Test.serverTestHost)
-    testImplementation(Ktor.Test.clientMock)
-    testImplementation(TmsKtorTokenSupport.userTokenVerificationMock)
+    testImplementation(managed.bundles.junit)
+    testImplementation(managed.mockk)
+    testImplementation(managed.bundles.kotest)
+    testImplementation(managed.testContainers.postgresql)
+    testImplementation(managed.ktor.test.server)
+    testImplementation(managed.ktor.test.clientMock)
+    testImplementation(managed.tms.ktorTokenSupport.userToken.verificationMock)
 }
 
 application {
